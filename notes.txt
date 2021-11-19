@@ -1,0 +1,76 @@
+The app should define an organization and some basic properties. Name, contact/admin, 
+The app should allow the user to create and assign users to an organization and provide basic user management.
+The app should connect with a third party api to do something such as send an email confirmation or map a user address.
+
+simple idea- create an account/user with login info (firstName, lastName, email/login, password, userId, role (coach, teammate))- user can add other users with first name, last name, job title, 
+
+ideas- weightlifting app for tracking weightlifting progress over time. you can upload progress pics (flip through like a carousel), track weight, and graphs can show progress of how much you lift over time
+
+"Weightroom"- Team Captain/Coach creates an account (firstName, lastName, email/login, password, userId, role (coach, teammate)), gets confirmation email. creates a team(adds other users possibly also via email) adds other users to their team. Team Captain/Coach will add a workout of 3-10 workouts and can specify sets and reps, as well as upload a photo or something. as teammates complete the workouts, their progress is shown to coach. Users update their own progress which is shared with the coach.
+
+Mysql:
+users: user_id, email, username, role (enum 1: coach, 2 teammate)
+accounts: account_id, user_id, first_name, last_name, email, password
+
+coaches: user_id, coach_id
+
+teammates: user_id, teammate_id,
+
+program: program_id, coach_id, start_date, end_date, weekly_count, name
+
+workout_plan: plan_id, exercise_name, sets, reps
+
+coach_teammate_xref: id, coach_id, teammate_id, program_id
+
+teammate_program_progress: plan_id, teammate_id, exercise_name, set, weight, added_date
+
+teammate_overall_progress: teammate_id, plan_id, completed (0,1)
+
+API:
+routes for:
+  -create user(username, email, role (enum 1: coach, 2: teammate))
+  -create account (user_id, first_name, last_name, email, password)
+  -login
+  -(POST) createProgram (name, start_date, end_date, weekly_count, name)
+  -(GET) searchTeammates (search by username where role = 2)
+  -(POST) addTeammateToProgram (user_id)
+  -(GET) getProgramsByCoachId(coachId)
+  -(POST) createTeam(coachId, teamName)
+  -(POST)- createProgram(team_id, startDate, endDate, weeklyCount, name)
+  -(POST)- createWorkoutPlan(plan_id, exercise_name, sets, reps)
+  -(PUT) editWorkoutPlan(plan_id, exercise_name, sets, reps)
+  -(GET) searchCoaches(username, where role = 1)
+  -(GET) getProgramsByCoach(coachId)
+  -(GET) getStatusByTeammateId (teammate individual status)
+  -(GET) getStatusByCoachId (all teammate status for program)
+
+UI:
+create an account page:
+  -radio buttons to join as coach or join as teammate, enter email, password, unique username
+
+
+login (email/pass)
+coach view: 
+  -Start a new Program btn (opens modal):
+    -page 1: enter team name, intensity/experience level, start date/end date "Next" btn
+    -page 2: add users, search by username (only searches where role = 2), "Finish" btn
+  -List of programs by coach- options to edit program (v2), view stats, edit workout_plan
+    -edit program: change end date, change name
+    -view stats: see each workout completed by which users, see how much they recorded was lifted per rep, show bar charts of teammate x weight, show line graphs of user's progress over time
+    -edit workout plan (modal)
+      -choose how many exercises, render that many option selects
+      -can enter name of exercise (lat pulldowns), number of sets, number of reps
+
+teammate view: 
+  -join program btn (modal)
+    -search for coach by username, view programs (see exercies, but not sets/reps, ideally they would pay for seeing that), 'Join weightroom' btn
+  -if no completed workout that day, show "Go To Today's Workout"
+    -list of all exercise names, with {number of sets} options for weight lifted, submit btn
+    -when completed, it submits that teammate's progress
+  -once completed, show individual teammates stats- bar charts for today's workout, or view line charts for progress over time
+
+
+-V2- History- current program or previous programs, upload progress pics (private), with option to share with coach maybe (not sure how to not make that creepy), team v team competitions, coach to view individual teammate status, coach-teammate messaging
+
+
+
